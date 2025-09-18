@@ -19,7 +19,7 @@ class View:
         ServicoDAO.inserir(servico)
     def Servico_atualizar(id, descricao, valor): 
         servico = Servico(id, descricao,valor)
-        ServicoDAO.inserir(servico)
+        ServicoDAO.atualizar(servico)
     def Servico_excluir(id): 
         ServicoDAO.excluir(id)
 

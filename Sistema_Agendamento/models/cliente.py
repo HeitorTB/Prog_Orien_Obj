@@ -6,12 +6,16 @@ class Cliente:
         self.set_fone(fone)
 
     def set_id(self, valor): 
+        if valor < 0: raise ValueError("Valor inváido")
         self.__id = valor 
     def set_nome(self, nome): 
+        if nome == "": raise ValueError("Valor inválido")
         self.__nome = nome
     def set_email(self, valor): 
+        if valor == "": raise ValueError("Valor inválido")
         self.__email = valor 
     def set_fone(self, valor): 
+        if valor == "": raise ValueError("Valor inválido")
         self.__fone = valor
 
     def get_id(self): return self.__id

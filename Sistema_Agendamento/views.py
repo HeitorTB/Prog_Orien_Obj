@@ -8,7 +8,7 @@ class View:
         ClienteDAO.inserir(cliente)
     def cliente_atualizar(id, nome, email, fone): 
         cliente = Cliente(id, nome, email, fone)
-        ClienteDAO.inserir(cliente)
+        ClienteDAO.atualizar(cliente)
     def cliente_excluir(id):
         ClienteDAO.excluir(id)
     
@@ -21,6 +21,5 @@ class View:
         servico = Servico(id, descricao,valor)
         ServicoDAO.inserir(servico)
     def Servico_excluir(id): 
-        servico = Servico(id, "0", 1)
-        ServicoDAO.excluir(servico)
+        ServicoDAO.excluir(id)
 

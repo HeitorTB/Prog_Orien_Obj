@@ -1,41 +1,38 @@
-class Cliente: 
-    def __init__(self, id, nome, email, fone):
-        self.set_id(id) 
-        self.set_nome(nome)
-        self.set_email(email) 
-        self.set_fone(fone)
-
+class Servico: 
+    def __init__(self, id, descricao, valor):
+        self.set_id(id)
+        self.set_descricao(descricao)
+        self.set_valor(valor)
     def set_id(self, valor): 
-        self.__id = valor 
-    def set_nome(self, nome): 
-        self.__nome = nome
-    def set_email(self, valor): 
-        self.__email = valor 
-    def set_fone(self, valor): 
-        self.__fone = valor
-
+        if valor < 0: raise ValueError("Valor inválido")
+        self.__id = valor
+    def set_descricao(self, valor): 
+        if valor == "": raise ValueError("Valor inválido")
+        self.__descricao = valor
+    def set_valor(self, valor): 
+        if valor < 0: raise ValueError("Valor inválido")
+        self.__valor = valor
     def get_id(self): return self.__id
-    def get_nome(self): return self.__nome 
-    def get_email(self): return self.__email
-    def get_fone(self): return self.__fone
+    def get_descricao(self): return self.__descricao
+    def get_valor(self): return self.__valor
 
-    def __str__(self): return f"{self.__id}-{self.__nome}-{self.__email}–{self.__fone}"
+    def __str__(self): return f"{self.__id}-{self.__descricao}-{self.__valor}"
 
     def to_json(self): 
         dic = {
             "id": self.__id,
-            "nome": self.__nome, 
-            "email": self.__email, 
-            "fone": self.__fone
+            "descricao": self.__descricao, 
+            "valor": self.__valor, 
         }
         return dic
     
     @staticmethod
     def from_json(dic): 
-        return Cliente(dic["id"], dic["nome"], dic["email"], dic["fone"])
+        return Servico(dic["id"], dic["descricao"], dic["valor"])
+    
 
 import json
-class ClienteDAO:
+class ServicoDAO:
     __objetos = []
     
     @classmethod
@@ -70,26 +67,28 @@ class ClienteDAO:
     
     @classmethod 
     def excluir(cls, id): 
-        for c in cls.__objetos:
+        for c in cls.__objetos: 
             if c.get_id() == id:
                 cls.__objetos.remove(c)
                 cls.salvar()
-                break  # Sai do loop depois de remover
+                break  # importante sair do loop depois de remover
 
+    
     @classmethod
     def abrir(cls): 
         cls.__objetos = []
         try: 
-            with open("clientes.json", mode = "r") as arquivo: 
+            with open("servicos.json", mode = "r") as arquivo:  # arquivo correto para serviços
                 list_dic = json.load(arquivo)
                 for dic in list_dic: 
-                    obj = Cliente.from_json(dic)
+                    obj = Servico.from_json(dic)
                     cls.__objetos.append(obj)
         except FileNotFoundError: 
             pass
 
     @classmethod
     def salvar(cls):
-        with open("clientes.json", mode="w") as arquivo: 
-            json.dump(cls.__objetos, arquivo, default=Cliente.to_json)
+        with open("servicos.json", mode="w") as arquivo:  # arquivo correto para serviços
+            json.dump(cls.__objetos, arquivo, default=Servico.to_json)
+
 

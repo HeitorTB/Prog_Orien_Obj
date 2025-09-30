@@ -13,7 +13,7 @@ class ManterServicoUI:
         with tab4: ManterServicoUI.excluir()
     
     def listar():
-        Servicos = View.Servico_listar()
+        Servicos = View.servico_listar()
         if len(Servicos) == 0: st.write("Nenhum Servico cadastrado")
         else:
             list_dic = []
@@ -30,7 +30,7 @@ class ManterServicoUI:
             time.sleep(2)
             st.rerun()
     def atualizar():
-        Servicos = View.Servico_listar()
+        Servicos = View.servico_listar()
         if len(Servicos) == 0: st.write("Nenhum Servico cadastrado")
         else:
             op = st.selectbox("Atualização de Servicos", Servicos)
@@ -44,7 +44,7 @@ class ManterServicoUI:
                 st.rerun()
 
     def excluir():
-        Servicos = View.Servico_listar()
+        Servicos = View.servico_listar()
         if len(Servicos) == 0: st.write("Nenhum Servico cadastrado")
         else:
             op = st.selectbox("Exclusão de Servicos", Servicos)

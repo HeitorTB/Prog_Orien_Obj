@@ -38,7 +38,7 @@ class ManterServicoUI:
             valor = st.text_input("Informe o novo valor", op.get_valor())
             if st.button("Atualizar"):
                 id = op.get_id()
-                View.Servico_atualizar(id, descricao, float(valor))
+                View.servico_atualizar(id, descricao, float(valor))
                 st.success("Servico atualizado com sucesso")
                 time.sleep(2)
                 st.rerun()
@@ -50,7 +50,7 @@ class ManterServicoUI:
             op = st.selectbox("Exclusão de Servicos", Servicos)
             if st.button("Excluir"):
                 id = op.get_id()
-                View.Servico_excluir(id)
+                View.servico_excluir(id)
                 st.success("Servico excluído com sucesso")
                 time.sleep(2)
                 st.rerun()

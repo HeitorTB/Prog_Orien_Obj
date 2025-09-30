@@ -76,7 +76,7 @@ class ManterHorarioUI:
                 if cliente != None: id_cliente = cliente.get_id()
                 if servico != None: id_servico = servico.get_id()
                 if Profissional != None: id_Profissional = Profissional.get_id()
-                View.horario_atualizar(op.get_id(), datetime.strptime(data, "%d/%m/%Y%H:%M"), confirmado, id_cliente, id_servico)
+                View.horario_atualizar(op.get_id(), datetime.strptime(data, "%d/%m/%Y%H:%M"), confirmado, id_cliente, id_servico, id_Profissional)
                 st.success("Horário atualizado com sucesso")
                 time.sleep(2)
                 st.rerun()

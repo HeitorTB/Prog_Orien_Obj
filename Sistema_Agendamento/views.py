@@ -19,8 +19,8 @@ class View:
         ClienteDAO.atualizar(cliente)
         
     def cliente_excluir(id):
-        cliente = Cliente(id, "", "", "")
-        ClienteDAO.excluir(cliente)
+        ClienteDAO.excluir(id)
+
 
     def servico_listar():
         return ServicoDAO.listar()
@@ -37,24 +37,25 @@ class View:
         ServicoDAO.atualizar(servico)
         
     def servico_excluir(id):
-        servico = Servico(id, "0", 1)
-        ServicoDAO.excluir(servico)
+        ServicoDAO.excluir(id)
 
-    def horario_inserir(data, confirmado, id_cliente, id_servico):
+    def horario_inserir(data, confirmado, id_cliente, id_servico, id_Profissional):
         c = Horario(0, data)
         c.set_confirmado(confirmado)
         c.set_id_cliente(id_cliente)
         c.set_id_servico(id_servico)
+        c.set_id_Profissional(id_Profissional)
         HorarioDAO.inserir(c)
 
     def horario_listar():
         return HorarioDAO.listar()
 
-    def horario_atualizar(id, data, confirmado, id_cliente, id_servico):
+    def horario_atualizar(id, data, confirmado, id_cliente, id_servico, id_Profissional):
         c = Horario(id, data)
         c.set_confirmado(confirmado)
         c.set_id_cliente(id_cliente)
         c.set_id_servico(id_servico)
+        c.set_id_Profissional(id_Profissional)
         HorarioDAO.atualizar(c)
 
     def horario_excluir(id):
@@ -76,5 +77,4 @@ class View:
         ProfissionalDAO.atualizar(profissional)
         
     def Profissional_excluir(id):
-        profissional = Cliente(id, "", "", "")
-        ProfissionalDAO.excluir(profissional)
+        ProfissionalDAO.excluir(id)

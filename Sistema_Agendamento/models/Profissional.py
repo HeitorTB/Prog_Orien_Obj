@@ -15,7 +15,7 @@ class Profissional:
         self.__especialidade = valor
     def set_conselho(self, valor):
         if valor == "": raise ValueError("Valor inválido")
-        self.__conselho == valor
+        self.__conselho = valor
     def get_id(self): return self.__id
     def get_nome(self): return self.__nome
     def get_especialidade(self): return self.__especialidade

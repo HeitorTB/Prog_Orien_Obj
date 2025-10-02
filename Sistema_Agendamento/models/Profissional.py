@@ -1,9 +1,10 @@
 class Profissional: 
-    def __init__(self, id, nome, especialidade, conselho):
+    def __init__(self, id, nome, especialidade, conselho, senha):
         self.set_id(id)
         self.set_nome(nome)
         self.set_especialidade(especialidade)
         self.set_conselho(conselho)
+        self.set_senha(senha)
     def set_id(self, valor): 
         if valor < 0: raise ValueError("Valor inválido")
         self.__id = valor
@@ -16,10 +17,14 @@ class Profissional:
     def set_conselho(self, valor):
         if valor == "": raise ValueError("Valor inválido")
         self.__conselho = valor
+    def set_senha(self, valor): 
+        if valor == "": raise ValueError("Valor inválido")
+        self.__senha = valor
     def get_id(self): return self.__id
     def get_nome(self): return self.__nome
     def get_especialidade(self): return self.__especialidade
     def get_conselho(self): return self.__conselho
+    def get_senha(self): return self.__senha
 
     def __str__(self): return f"{self.__id} - {self.__nome} - {self.__especialidade} - {self.__conselho}"
 
@@ -28,13 +33,14 @@ class Profissional:
             "id": self.__id,
             "nome": self.__nome, 
             "especialidade": self.__especialidade,
-            "conselho": self.__conselho
+            "conselho": self.__conselho,
+            "senha": self.__senha
         }
         return dic
     
     @staticmethod
     def from_json(dic): 
-        return Profissional(dic["id"], dic["nome"], dic["especialidade"], dic["conselho"])
+        return Profissional(dic["id"], dic["nome"], dic["especialidade"], dic["conselho"], dic["senha"])
     
 
 import json

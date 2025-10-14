@@ -2,7 +2,8 @@ from models.cliente import Cliente, ClienteDAO
 from models.servico import Servico, ServicoDAO
 from models.horario import Horario, HorarioDAO
 from models.Profissional import Profissional, ProfissionalDAO
-from datetime import datetime
+import streamlit as st
+from datetime import datetime, timedelta
 
 class View:
     def cliente_listar():
@@ -84,7 +85,7 @@ class View:
         r.sort(key = lambda h : h.get_data())
         return r
       
-    def profissional_listar():
+    def Profissional_listar():
         r = ProfissionalDAO.listar()
         r.sort(key = lambda obj : obj.get_nome())
         return r
@@ -119,4 +120,16 @@ class View:
             if c.get_email() == email and c.get_senha() == senha:
                 return  {"id": c.get_id(), "nome": c.get_nome()}
         return None
+
+    def Profissional_Agendar(data, horarioI, horarioF, intervalo, id_profissional): 
+        primeiro_horario = datetime.strptime(data +  " " + horarioI, '%d/%m/%Y %H:%M')
+        ultimo_horario = datetime.strptime(data + ' ' + horarioF, '%d/%m/%Y %H:%M')
+        intervalo_min = timedelta(minutes=intervalo)
+        y = ultimo_horario
+        x = primeiro_horario
+        while x <= y: 
+            View.horario_inserir(x, False, None, None, id_profissional)
+            x = x + intervalo_min
+            print(x)
+
 

@@ -8,6 +8,7 @@ from templates.perfilclienteUI import PerfilClienteUI
 from templates.PerfilProfissionalUI import PerfilProfissionalUI
 from templates.agendarservicoUI import AgendarServicoUI
 from templates.abrirAgenda import AbrirAgendaUI
+from templates.Meus_HorariosUI import Meus_Horarios
 from views import View
 import streamlit as st
 
@@ -30,9 +31,10 @@ class IndexUI:
         if op == "Agendar Serviço": AgendarServicoUI.main()
     
     def menu_profissional():
-        op = st.sidebar.selectbox("Menu", ["Meus Dados", "Minha Agenda"])
+        op = st.sidebar.selectbox("Menu", ["Meus Dados", "Minha Agenda", "Meus Horarios"])
         if op == "Meus Dados": PerfilProfissionalUI.main()
         if op =="Minha Agenda": AbrirAgendaUI.main()
+        if op =="Meus Horarios": Meus_Horarios.main()
 
     def sair_do_sistema():
         if st.sidebar.button("Sair"):

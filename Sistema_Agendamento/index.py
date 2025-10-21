@@ -9,16 +9,20 @@ from templates.PerfilProfissionalUI import PerfilProfissionalUI
 from templates.agendarservicoUI import AgendarServicoUI
 from templates.abrirAgenda import AbrirAgendaUI
 from templates.Meus_HorariosUI import Meus_Horarios
+from templates.VisualizarMeusServicosUI import VisualizarMeusServicosUI
+from templates.ConfirmarServicoUI import ConfirmarServicoUI
+from templates.AlterarSenhaAdminUI import AlterarSenhaAdminUI
 from views import View
 import streamlit as st
 
 class IndexUI:
     def menu_admin():            
-        op = st.sidebar.selectbox("Menu", ["Cadastro de Clientes", "Cadastro de Serviços", "Cadastro de Horários", "Cadastro de Profissionais"])
+        op = st.sidebar.selectbox("Menu", ["Cadastro de Clientes", "Cadastro de Serviços", "Cadastro de Horários", "Cadastro de Profissionais", "Alterar Senha"])
         if op == "Cadastro de Clientes": ManterClienteUI.main()
         if op == "Cadastro de Serviços": ManterServicoUI.main()
         if op == "Cadastro de Horários": ManterHorarioUI.main()
         if op == "Cadastro de Profissionais": ManterProfissionalUI.main()
+        if op == "Alterar Senha": AlterarSenhaAdminUI.main()
     
     def menu_visitante():
         op = st.sidebar.selectbox("Menu", ["Entrar no Sistema","Abrir Conta"])
@@ -26,15 +30,19 @@ class IndexUI:
         if op == "Abrir Conta": AbrirContaUI.main()
 
     def menu_cliente():
-        op = st.sidebar.selectbox("Menu", ["Meus Dados", "Agendar Serviço"])
+        op = st.sidebar.selectbox("Menu", ["Meus Dados", "Agendar Serviço", "Meus Serviços"])
         if op == "Meus Dados": PerfilClienteUI.main()
         if op == "Agendar Serviço": AgendarServicoUI.main()
+        if op == "Meus Serviços": VisualizarMeusServicosUI.main()
+
     
     def menu_profissional():
-        op = st.sidebar.selectbox("Menu", ["Meus Dados", "Minha Agenda", "Meus Horarios"])
+        op = st.sidebar.selectbox("Menu", ["Meus Dados", "Minha Agenda", "Meus Horarios","Confirmar Serviço"])
         if op == "Meus Dados": PerfilProfissionalUI.main()
         if op =="Minha Agenda": AbrirAgendaUI.main()
         if op =="Meus Horarios": Meus_Horarios.main()
+        if op == "Confirmar Serviço": ConfirmarServicoUI.main()
+
 
     def sair_do_sistema():
         if st.sidebar.button("Sair"):
@@ -43,15 +51,22 @@ class IndexUI:
             st.rerun()
 
     def sidebar():
-        if "usuario_id" not in st.session_state: IndexUI.menu_visitante()
+        if "usuario_id" not in st.session_state:
+            IndexUI.menu_visitante()
         else:
-            admin = st.session_state["usuario_nome"] == "admin"
-            prof = View.Profissional_listar_id(st.session_state["usuario_id"])
             st.sidebar.write("Bem-vindo(a), " + st.session_state["usuario_nome"])
-            if admin: IndexUI.menu_admin()
-            elif prof: IndexUI.menu_profissional()
-            else: IndexUI.menu_cliente()
+            tipo = st.session_state.get("usuario_tipo")
+            admin = st.session_state["usuario_nome"] == "admin"
+
+            if admin:
+                IndexUI.menu_admin()
+            elif tipo == "prof":
+                IndexUI.menu_profissional()
+            elif tipo == "cliente":
+                IndexUI.menu_cliente()
+
             IndexUI.sair_do_sistema()
+
 
     def main():
         View.cliente_criar_admin()

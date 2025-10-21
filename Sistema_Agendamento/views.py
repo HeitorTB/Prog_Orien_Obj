@@ -148,4 +148,24 @@ class View:
         r.sort(key = lambda h : h.get_data())
         return r
 
+    def cliente_visualizar_servicos(id_cliente):
+        return View.horario_cliente_listar(id_cliente)
+    
+    def confirmar_servico(id_horario):
+        h = HorarioDAO.listar_id(id_horario)
+        if h:
+            h.set_confirmado(True)
+            HorarioDAO.atualizar(h)
+    
+    def alterar_senha_admin(nova_senha):
+        admin = None
+        for c in View.cliente_listar():
+            if c.get_email() == "admin":
+                admin = c
+                break
+        if admin:
+            View.cliente_atualizar(admin.get_id(), admin.get_nome(), admin.get_email(), admin.get_fone(), nova_senha)
+
+
+
 

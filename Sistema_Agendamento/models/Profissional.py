@@ -1,4 +1,4 @@
-class Profissional: 
+class Profissional:
     def __init__(self, id, nome, especialidade, conselho, senha, email):
         self.set_id(id)
         self.set_nome(nome)
@@ -6,24 +6,35 @@ class Profissional:
         self.set_conselho(conselho)
         self.set_senha(senha)
         self.set_email(email)
-    def set_id(self, valor): 
-        if valor < 0: raise ValueError("Valor inválido")
-        self.__id = valor
-    def set_nome(self, valor): 
-        if valor == "": raise ValueError("Valor inválido")
+
+    # --------- SETTERS ---------
+    def set_id(self, id):
+        self.__id = id
+
+    def set_nome(self, valor):
+        if not valor.strip():
+            raise ValueError("Nome não pode ser vazio.")
         self.__nome = valor
-    def set_especialidade(self, valor): 
-        if valor == "": raise ValueError("Valor inválido")
-        self.__especialidade = valor
+
+    def set_especialidade(self, valor):
+        # Pode ser opcional, então não lança exceção
+        self.__especialidade = valor.strip() if valor else ""
+
     def set_conselho(self, valor):
-        if valor == "": raise ValueError("Valor inválido")
-        self.__conselho = valor
-    def set_senha(self, valor): 
-        if valor == "": raise ValueError("Valor inválido")
+        # Pode ser opcional também
+        self.__conselho = valor.strip() if valor else ""
+
+    def set_senha(self, valor):
+        if not valor.strip():
+            raise ValueError("Senha não pode ser vazia.")
         self.__senha = valor
-    def set_email(self, valor): 
-        if valor =="": raise ValueError("Valor inválido")
+
+    def set_email(self, valor):
+        if not valor.strip():
+            raise ValueError("E-mail não pode ser vazio.")
         self.__email = valor
+
+    # --------- GETTERS ---------
     def get_id(self): return self.__id
     def get_nome(self): return self.__nome
     def get_especialidade(self): return self.__especialidade
@@ -31,22 +42,26 @@ class Profissional:
     def get_senha(self): return self.__senha
     def get_email(self): return self.__email
 
-    def __str__(self): return f"{self.__id} - {self.__nome} - {self.__especialidade} - {self.__conselho}"
+    # --------- OUTROS MÉTODOS ---------
+    def __str__(self):
+        return f"{self.__id} - {self.__nome} - {self.__especialidade} - {self.__conselho}"
 
-    def to_json(self): 
-        dic = {
+    def to_json(self):
+        return {
             "id": self.__id,
-            "nome": self.__nome, 
+            "nome": self.__nome,
             "especialidade": self.__especialidade,
             "conselho": self.__conselho,
             "senha": self.__senha,
             "email": self.__email
         }
-        return dic
-    
+
     @staticmethod
-    def from_json(dic): 
-        return Profissional(dic["id"], dic["nome"], dic["especialidade"], dic["conselho"], dic["senha"], dic["email"])
+    def from_json(dic):
+        return Profissional(
+            dic["id"], dic["nome"], dic["especialidade"],
+            dic["conselho"], dic["senha"], dic["email"]
+        )
     
 
 import json

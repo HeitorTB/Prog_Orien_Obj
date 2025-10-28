@@ -13,51 +13,64 @@ class ManterProfissionalUI:
         with tab4: ManterProfissionalUI.excluir()
     
     def listar():
-        Profissionais = View.Profissional_listar()
-        if len(Profissionais) == 0: st.write("Nenhum Profissional cadastrado")
+        profissionais = View.Profissional_listar()
+        if len(profissionais) == 0:
+            st.write("Nenhum profissional cadastrado")
         else:
-            list_dic = []
-            for obj in Profissionais: list_dic.append(obj.to_json())
+            list_dic = [obj.to_json() for obj in profissionais]
             df = pd.DataFrame(list_dic)
             st.dataframe(df)
 
     def inserir():
-        nome = st.text_input("Informe o Nome")
-        especialidade= st.text_input("Informe a Especialidade")
-        conselho = st.text_input("Informe o Conselho")
-        email = st.text_input("Informe o email")
+        nome = st.text_input("Informe o nome")
+        especialidade = st.text_input("Informe a especialidade")
+        conselho = st.text_input("Informe o conselho")
+        email = st.text_input("Informe o e-mail")
         senha = st.text_input("Informe a senha", type="password")
         if st.button("Inserir"):
-            View.Profissional_inserir(nome, especialidade, conselho, senha, email)
-            st.success("Profissional inserido com sucesso")
+            try:
+                View.Profissional_inserir(nome, especialidade, conselho, senha, email)
+                st.success("Profissional inserido com sucesso!")
+            except ValueError as erro:
+                st.error(f"Erro ao inserir profissional: {erro}")
             time.sleep(2)
             st.rerun()
-    
+
     def atualizar():
-        Profissionais = View.Profissional_listar()
-        if len(Profissionais) == 0: st.write("Nenhum Profissional cadastrado")
+        profissionais = View.Profissional_listar()
+        if len(profissionais) == 0:
+            st.write("Nenhum profissional cadastrado")
         else:
-            op = st.selectbox("Atualização de Profissionais", Profissionais)
+            op = st.selectbox("Atualização de profissionais", profissionais)
             nome = st.text_input("Informe o novo nome", op.get_nome())
             especialidade = st.text_input("Informe a nova especialidade", op.get_especialidade())
             conselho = st.text_input("Informe o novo conselho", op.get_conselho())
-            email = st.text_input("Informe o novo email", op.get_conselho())
-            senha = st.text_input("Informe a nova senha", type="password")
+            email = st.text_input("Informe o novo e-mail", op.get_email())
+            senha = st.text_input("Informe a nova senha", op.get_senha(), type="password")
             if st.button("Atualizar"):
-                id = op.get_id()
-                View.Profissional_atualizar(id, nome, especialidade, conselho, senha, email)
-                st.success("Profissional atualizado com sucesso")
+                try:
+                    id = op.get_id()
+                    View.Profissional_atualizar(id, nome, especialidade, conselho, senha, email)
+                    st.success("Profissional atualizado com sucesso!")
+                except ValueError as erro:
+                    st.error(f"Erro ao atualizar profissional: {erro}")
+                time.sleep(2)
+                st.rerun()
+                
+
+    def excluir():
+        profissionais = View.Profissional_listar()
+        if len(profissionais) == 0:
+            st.write("Nenhum profissional cadastrado")
+        else:
+            op = st.selectbox("Exclusão de profissionais", profissionais)
+            if st.button("Excluir"):
+                try:
+                    id = op.get_id()
+                    View.Profissional_excluir(id)
+                    st.success("Profissional excluído com sucesso!")
+                except ValueError as erro:
+                    st.error(f"Erro ao excluir profissional: {erro}")
                 time.sleep(2)
                 st.rerun()
 
-    def excluir():
-        Profissionais = View.Profissional_listar()
-        if len(Profissionais) == 0: st.write("Nenhum Profissional cadastrado")
-        else:
-            op = st.selectbox("Exclusão de Profissionais", Profissionais)
-            if st.button("Excluir"):
-                id = op.get_id()
-                View.Profissional_excluir(id)
-                st.success("Profissional excluído com sucesso")
-                time.sleep(2)
-                st.rerun()

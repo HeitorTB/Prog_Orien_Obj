@@ -64,15 +64,25 @@ class View:
         return ServicoDAO.listar_id(id)
 
     def servico_inserir(descricao, valor):
+        for obj in View.servico_listar():
+            if obj.get_descricao() == descricao:
+                raise ValueError("Serviço já cadastrado")
         servico = Servico(0, descricao, valor)
         ServicoDAO.inserir(servico)
 
     def servico_atualizar(id, descricao, valor):
+        for obj in View.servico_listar():
+            if obj.get_id() != id and obj.get_descricao() == descricao:
+                raise ValueError("Descrição já cadastrada em outro serviço")
         servico = Servico(id, descricao, valor)
         ServicoDAO.atualizar(servico)
 
     def servico_excluir(id):
-        ServicoDAO.excluir(id)
+        for obj in View.horario_listar():
+            if obj.get_id_servico == id:
+                raise ValueError("Serviço já agendado: Não é possível excluir")
+        c = Servico(id, "sem descricao",0)
+        ServicoDAO.excluir()
 
     # ---------------------- HORÁRIO ----------------------
 

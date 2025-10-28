@@ -25,10 +25,14 @@ class ManterServicoUI:
         valor = st.text_input("Informe o Valor")
         descricao= st.text_input("Informe a Descrição")
         if st.button("Inserir"):
-            View.servico_inserir(descricao, float(valor))
-            st.success("Servico inserido com sucesso")
+            try:
+                View.servico_inserir(descricao, float(valor))
+                st.success("Servico inserido com sucesso")
+            except ValueError as erro:
+                st.error(erro)
             time.sleep(2)
             st.rerun()
+
     def atualizar():
         Servicos = View.servico_listar()
         if len(Servicos) == 0: st.write("Nenhum Servico cadastrado")
@@ -37,9 +41,12 @@ class ManterServicoUI:
             descricao = st.text_input("Informe a nova descrição", op.get_descricao())
             valor = st.text_input("Informe o novo valor", op.get_valor())
             if st.button("Atualizar"):
-                id = op.get_id()
-                View.servico_atualizar(id, descricao, float(valor))
-                st.success("Servico atualizado com sucesso")
+                try:
+                    id = op.get_id()
+                    View.servico_atualizar(id, descricao, float(valor))
+                    st.success("Servico atualizado com sucesso")
+                except ValueError as erro:
+                    st.error(erro)
                 time.sleep(2)
                 st.rerun()
 
@@ -49,8 +56,11 @@ class ManterServicoUI:
         else:
             op = st.selectbox("Exclusão de Servicos", Servicos)
             if st.button("Excluir"):
-                id = op.get_id()
-                View.servico_excluir(id)
-                st.success("Servico excluído com sucesso")
+                try:
+                    id = op.get_id()
+                    View.servico_excluir(id)
+                    st.success("Servico excluído com sucesso")
+                except ValueError as erro:
+                    st.error(erro)
                 time.sleep(2)
                 st.rerun()

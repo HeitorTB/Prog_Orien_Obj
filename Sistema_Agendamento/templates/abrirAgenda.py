@@ -12,8 +12,7 @@ class AbrirAgendaUI:
 
         if st.button("Abrir Agenda"):
             try:
-                View.Profissional_Agendar(data, horarioI, horarioF, int(intervalo),
-                                          st.session_state['usuario_id'])
+                View.Profissional_Agendar(data, horarioI, horarioF, int(intervalo),st.session_state['usuario_id'])
                 st.success("Agenda aberta com sucesso!")
                 time.sleep(2)
                 st.rerun()

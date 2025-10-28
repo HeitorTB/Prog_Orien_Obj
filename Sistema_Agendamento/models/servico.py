@@ -1,5 +1,7 @@
 class Servico: 
     def __init__(self, id, descricao, valor):
+        if descricao == "": raise ValueError("Descrição Inválida")
+        if valor < 0: raise ValueError("Valor Inválido")
         self.set_id(id)
         self.set_descricao(descricao)
         self.set_valor(valor)

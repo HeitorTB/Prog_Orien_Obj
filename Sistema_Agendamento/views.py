@@ -224,10 +224,18 @@ class View:
         primeiro_horario = datetime.strptime(data + " " + horarioI, '%d/%m/%Y %H:%M')
         ultimo_horario = datetime.strptime(data + ' ' + horarioF, '%d/%m/%Y %H:%M')
         intervalo_min = timedelta(minutes=intervalo)
+
+        if primeiro_horario.date() < datetime.now().date():
+            raise ValueError("Data não pode estar no passado")
+
+        if intervalo > 120: 
+            raise ValueError("Intervalo máximo é 120 min")
+
         x = primeiro_horario
         while x <= ultimo_horario:
             View.horario_inserir(x, False, None, None, id_profissional)
             x = x + intervalo_min
+
 
     def horario_prof_listar(id_profissional):
         r = [h for h in View.horario_listar() if h.get_id_Profissional() == id_profissional]

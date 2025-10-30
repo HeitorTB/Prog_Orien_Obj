@@ -18,5 +18,3 @@ class AbrirAgendaUI:
                 st.rerun()
             except ValueError as e:
                 st.error(f"Erro: {e}")
-            except Exception:
-                st.error("Erro inesperado ao abrir agenda.")

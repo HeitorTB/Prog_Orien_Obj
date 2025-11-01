@@ -17,7 +17,7 @@ class View:
     def cliente_listar_id(id):
         return ClienteDAO.listar_id(id)
 
-    def cliente_inserir(nome, email, fone, senha):
+    def cliente_inserir(nome, email, fone, senha, aniv):
         for c in ClienteDAO.listar():
             if c.get_email().lower() == email.lower():
                 raise ValueError("Já existe um cliente com este e-mail.")
@@ -26,10 +26,10 @@ class View:
             if p.get_email().lower() == email.lower():
                 raise ValueError("Já existe um profissional com este e-mail.")
 
-        cliente = Cliente(0, nome, email, fone, senha)
+        cliente = Cliente(0, nome, email, fone, senha, aniv)
         ClienteDAO.inserir(cliente)
 
-    def cliente_atualizar(id, nome, email, fone, senha):
+    def cliente_atualizar(id, nome, email, fone, senha, aniv):
         # === VALIDAÇÕES ===
         if email.lower() == "admin":
             raise ValueError("O e-mail 'admin' é reservado para o administrador.")
@@ -42,7 +42,7 @@ class View:
             if p.get_email().lower() == email.lower():
                 raise ValueError("Já existe um profissional com este e-mail.")
 
-        cliente = Cliente(id, nome, email, fone, senha)
+        cliente = Cliente(id, nome, email, fone, senha, aniv)
         ClienteDAO.atualizar(cliente)
 
     def cliente_excluir(id):
@@ -206,7 +206,7 @@ class View:
         for c in View.cliente_listar():
             if c.get_email().lower() == "admin":
                 return
-        View.cliente_inserir("admin", "admin", "fone", "1234")
+        View.cliente_inserir("admin", "admin", "fone", "1234", "30/10/2025")
 
     def cliente_autenticar(email, senha):
         for c in View.cliente_listar():

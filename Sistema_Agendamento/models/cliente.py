@@ -1,11 +1,13 @@
 from models.DAO import DAO
+from datetime import datetime
 class Cliente:
-    def __init__(self, id, nome, email, fone, senha):
+    def __init__(self, id, nome, email, fone, senha, aniv):
         self.set_id(id)
         self.set_nome(nome)
         self.set_email(email)
         self.set_fone(fone)
         self.set_senha(senha)
+        self.set_aniv(aniv)
 
     def set_id(self, id_cliente):
         self.__id = id_cliente
@@ -14,6 +16,10 @@ class Cliente:
         if not nome.strip():
             raise ValueError("Nome não pode ser vazio")
         self.__nome = nome
+
+    def set_aniv(self, aniv):
+        dt = datetime.strptime(aniv, '%d/%m/%Y')
+        self.__aniv = dt.strftime('%d/%m/%Y')
 
     def set_email(self, valor):
         if not valor.strip():
@@ -35,9 +41,10 @@ class Cliente:
     def get_email(self): return self.__email
     def get_fone(self): return self.__fone
     def get_senha(self): return self.__senha
+    def get_aniv(self): return self.__aniv
 
     def __str__(self):
-        return f"{self.__id} - {self.__nome} - {self.__email} - {self.__fone}"
+        return f"{self.__id} - {self.__nome} - {self.__email} - {self.__fone} - {self.__aniv}"
 
     def to_json(self):
         return {
@@ -45,12 +52,13 @@ class Cliente:
             "nome": self.__nome,
             "email": self.__email,
             "fone": self.__fone,
-            "senha": self.__senha
+            "senha": self.__senha,
+            "Nascimento": self.__aniv
         }
 
     @staticmethod
     def from_json(dic):
-        return Cliente(dic["id"], dic["nome"], dic["email"], dic["fone"], dic["senha"])
+        return Cliente(dic["id"], dic["nome"], dic["email"], dic["fone"], dic["senha"], dic["aniv"])
 
 import json
 class ClienteDAO(DAO):

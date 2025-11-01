@@ -11,10 +11,11 @@ class PerfilClienteUI:
         email = st.text_input("Informe o novo e-mail", op.get_email())
         fone = st.text_input("Informe o novo fone", op.get_fone())
         senha = st.text_input("Informe a nova senha", op.get_senha(), type="password")
+        aniv = st.text_input("Informe o novo nascimento", op.get_aniv())
 
         if st.button("Atualizar"):
             try:
-                View.cliente_atualizar(op.get_id(), nome, email, fone, senha)
+                View.cliente_atualizar(op.get_id(), nome, email, fone, senha, aniv)
                 st.success("Dados atualizados com sucesso!")
             except Exception as erro:
                 st.error(erro)

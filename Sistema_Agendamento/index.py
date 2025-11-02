@@ -12,6 +12,7 @@ from templates.Meus_HorariosUI import Meus_Horarios
 from templates.VisualizarMeusServicosUI import VisualizarMeusServicosUI
 from templates.ConfirmarServicoUI import ConfirmarServicoUI
 from templates.AlterarSenhaAdminUI import AlterarSenhaAdminUI
+from templates.Mostrar_AniversariantesUI import MostrarAniversariantes
 from views import View
 import streamlit as st
 
@@ -30,18 +31,20 @@ class IndexUI:
         if op == "Abrir Conta": AbrirContaUI.main()
 
     def menu_cliente():
-        op = st.sidebar.selectbox("Menu", ["Meus Dados", "Agendar Serviço", "Meus Serviços"])
+        op = st.sidebar.selectbox("Menu", ["Meus Dados", "Agendar Serviço", "Meus Serviços", "Aniversariantes"])
         if op == "Meus Dados": PerfilClienteUI.main()
         if op == "Agendar Serviço": AgendarServicoUI.main()
         if op == "Meus Serviços": VisualizarMeusServicosUI.main()
+        if op == "Aniversariantes": MostrarAniversariantes.main()
 
     
     def menu_profissional():
-        op = st.sidebar.selectbox("Menu", ["Meus Dados", "Minha Agenda", "Meus Horarios","Confirmar Serviço"])
+        op = st.sidebar.selectbox("Menu", ["Meus Dados", "Minha Agenda", "Meus Horarios","Confirmar Serviço", "Aniversariantes"])
         if op == "Meus Dados": PerfilProfissionalUI.main()
         if op =="Minha Agenda": AbrirAgendaUI.main()
         if op =="Meus Horarios": Meus_Horarios.main()
         if op == "Confirmar Serviço": ConfirmarServicoUI.main()
+        if op == "Aniversariantes": MostrarAniversariantes.main()
 
 
     def sair_do_sistema():

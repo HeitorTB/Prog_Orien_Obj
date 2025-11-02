@@ -1,0 +1,94 @@
+import streamlit as st 
+import pandas as pd
+from datetime import datetime
+from views import View
+
+class MostrarAniversariantes: 
+    def main():
+        st.header("Aniversariantes do Dia")
+        
+        aniversariantes_c = View.mostrar_aniversariantes_clientes()
+        aniversariantes_p = View.mostrar_aniversariantes_prof()
+        
+        total_aniversariantes = len(aniversariantes_c) + len(aniversariantes_p)
+        
+        if total_aniversariantes == 0:
+            st.info("🎉 Nenhum aniversariante hoje")
+        else:
+            st.success(f"🎂 {total_aniversariantes} aniversariante(s) hoje!")
+        
+        # Clientes Aniversariantes
+        if aniversariantes_c:
+            st.subheader("Clientes Aniversariantes")
+            
+            dados_clientes = []
+            for cliente in aniversariantes_c:
+                idade = MostrarAniversariantes._calcular_idade(cliente.get_aniv())
+                dados_clientes.append({
+                    'Nome': cliente.get_nome(),
+                    'Email': cliente.get_email(),
+                    'Telefone': cliente.get_fone(),
+                    'Data de Nascimento': cliente.get_aniv(),
+                    'Idade': f"{idade} anos"
+                })
+            
+            df_clientes = pd.DataFrame(dados_clientes)
+            st.dataframe(
+                df_clientes,
+                use_container_width=True,
+                hide_index=True
+            )
+        
+        if aniversariantes_p:
+            st.subheader("Profissionais Aniversariantes")
+            
+            dados_profissionais = []
+            for prof in aniversariantes_p:
+                idade = MostrarAniversariantes._calcular_idade(prof.get_aniv())
+                dados_profissionais.append({
+                    'Nome': prof.get_nome(),
+                    'Email': prof.get_email(),
+                    'Especialidade': prof.get_especialidade(),
+                    'Conselho': prof.get_conselho(),
+                    'Data de Nascimento': prof.get_aniv(),
+                    'Idade': f"{idade} anos"
+                })
+            
+            df_profissionais = pd.DataFrame(dados_profissionais)
+            st.dataframe(
+                df_profissionais,
+                use_container_width=True,
+                hide_index=True
+            )
+
+    def _calcular_idade(data_nascimento):
+        """Calcula a idade baseada na data de nascimento"""
+        if not data_nascimento:
+            return "N/A"
+            
+        try:
+            # Converte a string para datetime
+            nascimento = datetime.strptime(data_nascimento, "%d/%m/%Y")
+            hoje = datetime.now()
+            
+            # Calcula a idade
+            idade = hoje.year - nascimento.year
+            
+            # Ajusta se ainda não fez aniversário este ano
+            if (hoje.month, hoje.day) < (nascimento.month, nascimento.day):
+                idade -= 1
+                
+            return idade
+        except ValueError:
+            return "N/A"
+
+    def _extrair_dia_mes(data_str):
+        """Extrai dia e mês de uma string de data"""
+        if not data_str:
+            return None
+            
+        try:
+            data = datetime.strptime(data_str, "%d/%m/%Y")
+            return data.strftime("%d/%m")
+        except ValueError:
+            return None

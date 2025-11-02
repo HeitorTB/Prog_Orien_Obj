@@ -22,7 +22,7 @@ class DAO(ABC):
     def listar_id(cls,id):
         cls.abrir()
         for obj in cls._objetos:
-            if obj.get_id == id: return obj
+            if obj.get_id() == id: return obj
         return None
     
     @classmethod
@@ -31,6 +31,16 @@ class DAO(ABC):
         if aux != None:
             cls._objetos.remove(aux)
             cls.salvar()
+    
+    @classmethod
+    def atualizar(cls, obj):
+        cls.abrir()
+        for i, aux in enumerate(cls._objetos):
+            if aux.get_id() == obj.get_id():
+                cls._objetos[i] = obj
+                cls.salvar()
+                return
+        raise ValueError(f"Horário com id {obj.get_id()} não encontrado")
 
     @classmethod
     @abstractmethod

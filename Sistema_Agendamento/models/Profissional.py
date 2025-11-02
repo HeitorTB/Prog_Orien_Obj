@@ -1,12 +1,14 @@
+from datetime import datetime
 from models.DAO import DAO
 class Profissional:
-    def __init__(self, id, nome, especialidade, conselho, senha, email):
+    def __init__(self, id, nome, especialidade, conselho, senha, email, aniv):
         self.set_id(id)
         self.set_nome(nome)
         self.set_especialidade(especialidade)
         self.set_conselho(conselho)
         self.set_senha(senha)
         self.set_email(email)
+        self.set_aniv(aniv)
 
     # --------- SETTERS ---------
     def set_id(self, id):
@@ -35,6 +37,11 @@ class Profissional:
             raise ValueError("E-mail não pode ser vazio.")
         self.__email = valor
 
+    def set_aniv(self, dt):
+        dt = datetime.strptime(dt, '%d/%m/%Y')
+        self.__aniv = dt.strftime('%d/%m/%Y')
+
+
     # --------- GETTERS ---------
     def get_id(self): return self.__id
     def get_nome(self): return self.__nome
@@ -42,6 +49,7 @@ class Profissional:
     def get_conselho(self): return self.__conselho
     def get_senha(self): return self.__senha
     def get_email(self): return self.__email
+    def get_aniv(self): return self.__aniv
 
     # --------- OUTROS MÉTODOS ---------
     def __str__(self):
@@ -54,14 +62,15 @@ class Profissional:
             "especialidade": self.__especialidade,
             "conselho": self.__conselho,
             "senha": self.__senha,
-            "email": self.__email
+            "email": self.__email,
+            "Nascimento": self.__aniv
         }
 
     @staticmethod
     def from_json(dic):
         return Profissional(
             dic["id"], dic["nome"], dic["especialidade"],
-            dic["conselho"], dic["senha"], dic["email"]
+            dic["conselho"], dic["senha"], dic["email"], dic["Nascimento"]
         )
     
 

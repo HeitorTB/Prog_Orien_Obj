@@ -163,7 +163,7 @@ class View:
     def Profissional_listar_id(id):
         return ProfissionalDAO.listar_id(id)
 
-    def Profissional_inserir(nome, especialidade, conselho, senha, email):
+    def Profissional_inserir(nome, especialidade, conselho, senha, email, aniv):
         if email.lower() == "admin":
             raise ValueError("O e-mail 'admin' é reservado para o administrador.")
 
@@ -175,10 +175,10 @@ class View:
             if c.get_email().lower() == email.lower():
                 raise ValueError("Já existe um cliente com este e-mail.")
 
-        profissional = Profissional(0, nome, especialidade, conselho, senha, email)
+        profissional = Profissional(0, nome, especialidade, conselho, senha, email, aniv)
         ProfissionalDAO.inserir(profissional)
 
-    def Profissional_atualizar(id, nome, especialidade, conselho, senha, email):
+    def Profissional_atualizar(id, nome, especialidade, conselho, senha, email, aniv):
         if email.lower() == "admin":
             raise ValueError("O e-mail 'admin' é reservado para o administrador.")
 
@@ -190,7 +190,7 @@ class View:
             if c.get_email().lower() == email.lower():
                 raise ValueError("Já existe um cliente com este e-mail.")
 
-        profissional = Profissional(id, nome, especialidade, conselho, senha, email)
+        profissional = Profissional(id, nome, especialidade, conselho, senha, email, aniv)
         ProfissionalDAO.atualizar(profissional)
 
     def Profissional_excluir(id):
@@ -261,3 +261,41 @@ class View:
             if c.get_email().lower() == "admin":
                 View.cliente_atualizar(c.get_id(), c.get_nome(), c.get_email(), c.get_fone(), nova_senha)
                 break
+    
+    def mostrar_aniversariantes_clientes():
+        hoje = datetime.now()
+        dia_mes_hoje = hoje.strftime("%d/%m")  # Apenas dia e mês
+        
+        aniversariantes = []
+        for c in View.cliente_listar():
+            # Pega apenas dia e mês da data de aniversário
+            if c.get_aniv():
+                try:
+                    aniv_dia_mes = datetime.strptime(c.get_aniv(), "%d/%m/%Y").strftime("%d/%m")
+                    if aniv_dia_mes == dia_mes_hoje:
+                        aniversariantes.append(c)
+                except ValueError:
+                    # Se a data estiver em formato inválido, ignora
+                    continue
+        return aniversariantes
+
+    def mostrar_aniversariantes_prof():
+        hoje = datetime.now()
+        dia_mes_hoje = hoje.strftime("%d/%m")  # Apenas dia e mês
+        
+        aniversariantes = []
+        for p in View.Profissional_listar():
+            # Pega apenas dia e mês da data de aniversário
+            if p.get_aniv():
+                try:
+                    aniv_dia_mes = datetime.strptime(p.get_aniv(), "%d/%m/%Y").strftime("%d/%m")
+                    if aniv_dia_mes == dia_mes_hoje:
+                        aniversariantes.append(p)
+                except ValueError:
+                    # Se a data estiver em formato inválido, ignora
+                    continue
+        return aniversariantes
+
+                
+                
+

@@ -13,9 +13,9 @@ class MostrarAniversariantes:
         total_aniversariantes = len(aniversariantes_c) + len(aniversariantes_p)
         
         if total_aniversariantes == 0:
-            st.info("🎉 Nenhum aniversariante hoje")
+            st.info("Nenhum aniversariante hoje")
         else:
-            st.success(f"🎂 {total_aniversariantes} aniversariante(s) hoje!")
+            st.success(f"{total_aniversariantes} aniversariante(s) hoje!")
         
         # Clientes Aniversariantes
         if aniversariantes_c:
@@ -62,19 +62,15 @@ class MostrarAniversariantes:
             )
 
     def _calcular_idade(data_nascimento):
-        """Calcula a idade baseada na data de nascimento"""
         if not data_nascimento:
             return "N/A"
             
         try:
-            # Converte a string para datetime
             nascimento = datetime.strptime(data_nascimento, "%d/%m/%Y")
             hoje = datetime.now()
             
-            # Calcula a idade
             idade = hoje.year - nascimento.year
             
-            # Ajusta se ainda não fez aniversário este ano
             if (hoje.month, hoje.day) < (nascimento.month, nascimento.day):
                 idade -= 1
                 
@@ -83,7 +79,6 @@ class MostrarAniversariantes:
             return "N/A"
 
     def _extrair_dia_mes(data_str):
-        """Extrai dia e mês de uma string de data"""
         if not data_str:
             return None
             

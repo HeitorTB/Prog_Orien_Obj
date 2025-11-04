@@ -17,7 +17,6 @@ class MostrarAniversariantes:
         else:
             st.success(f"{total_aniversariantes} aniversariante(s) hoje!")
         
-        # Clientes Aniversariantes
         if aniversariantes_c:
             st.subheader("Clientes Aniversariantes")
             

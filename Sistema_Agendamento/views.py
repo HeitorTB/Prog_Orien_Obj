@@ -51,7 +51,10 @@ class View:
             if h.get_id_cliente() == id:
                 raise ValueError("Não é possível excluir este cliente, pois há horários agendados.")
 
-        ClienteDAO.excluir(id)
+        cliente = ClienteDAO.listar_id(id)  # 🔹 pega o objeto Cliente pelo id
+        if cliente is None:
+            raise ValueError("Cliente não encontrado.")
+        ClienteDAO.excluir(cliente)
 
     # ---------------------- SERVIÇO ----------------------
 
@@ -81,8 +84,10 @@ class View:
         for obj in View.horario_listar():
             if obj.get_id_servico == id:
                 raise ValueError("Serviço já agendado: Não é possível excluir")
-        c = Servico(id, "sem descricao",0)
-        ServicoDAO.excluir()
+        servico = ServicoDAO.listar_id(id) 
+        if servico is None:
+            raise ValueError("Serviço não encontrado.")
+        ServicoDAO.excluir(servico)
 
     # ---------------------- HORÁRIO ----------------------
 
@@ -198,7 +203,11 @@ class View:
             if h.get_id_Profissional() == id:
                 raise ValueError("Não é possível excluir este profissional, pois há horários cadastrados.")
 
-        ProfissionalDAO.excluir(id)
+        obj = ProfissionalDAO.listar_id(id)
+        if obj:
+            ProfissionalDAO.excluir(obj)
+        else:
+            raise ValueError("Profissional não encontrado.")
 
     # ---------------------- ADMIN E AUTENTICAÇÃO ----------------------
 

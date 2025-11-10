@@ -79,7 +79,7 @@ class ManterHorarioUI:
 
             data = st.text_input("Informe a nova data e horário (dd/mm/yyyy HH:MM)",
                                  op.get_data().strftime("%d/%m/%Y %H:%M"))
-            confirmado = st.checkbox("Confirmado", op.get_confirmado())
+            confirmado = st.checkbox("Confirmado", op.get_confirmado(), key="confirmado")
 
             cliente = st.selectbox("Cliente", clientes,
                                    index=next((i for i, c in enumerate(clientes)

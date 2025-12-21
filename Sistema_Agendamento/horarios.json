@@ -1,0 +1,1 @@
+[{"id": 2, "data": "10/10/2026 14:30", "confirmado": true, "id_cliente": 2, "id_servico": 1, "id_Profissional": 1}, {"id": 3, "data": "11/11/2025 14:00", "confirmado": true, "id_cliente": 4, "id_servico": 1, "id_Profissional": 2}, {"id": 4, "data": "11/11/2025 14:30", "confirmado": false, "id_cliente": null, "id_servico": null, "id_Profissional": 2}]

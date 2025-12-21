@@ -12,6 +12,7 @@ class aluno:
         if not nome.strip():
             raise ValueError("Nome não pode ser vazio")
         self.__nome = nome
+        self = heitor
 
     def set_email(self, valor):
         if not valor.strip():

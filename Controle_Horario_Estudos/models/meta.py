@@ -1,13 +1,16 @@
 from datetime import datetime
+# Ensure this import path matches your project structure
+from DAO_sql.database import Database as DAO 
 
 class Meta:
-    def __init__(self, id, descricao, data_limite, data_conclusao, status, id_usuario):
+    def __init__(self, id, descricao, data_limite, data_conclusao, status, id_disciplina, id_aluno):
         self.set_id(id)
         self.set_descricao(descricao)
         self.set_data_limite(data_limite)
         self.set_data_conclusao(data_conclusao)
         self.set_status(status)
-        self.set_id_usuario(id_usuario)
+        self.set_id_disciplina(id_disciplina) # Added this
+        self.set_id_aluno(id_aluno)           # Renamed from id_usuario
 
     def set_id(self, id):
         self.__id = id
@@ -24,28 +27,32 @@ class Meta:
         self.__data_limite = data
 
     def set_data_conclusao(self, data):
-        # Conforme seu CSV, este campo não pode ser nulo.
-        self.__validar_data(data, "Data Conclusão")
+        # Assuming data_conclusao can be None if not finished, 
+        # but your DB creates it as text. If it is optional in logic, adjust here.
+        if data: 
+            self.__validar_data(data, "Data Conclusão")
         self.__data_conclusao = data
 
     def set_status(self, valor):
-        # Aceita booleano (True/False) ou Inteiro do banco (1/0)
         if isinstance(valor, int):
             self.__status = bool(valor)
         else:
             self.__status = bool(valor)
 
-    def set_id_usuario(self, id_usuario):
-        if id_usuario is None:
-            raise ValueError("A meta deve estar vinculada a um usuário.")
-        self.__id_usuario = int(id_usuario)
+    def set_id_disciplina(self, id_disciplina):
+        if id_disciplina is None:
+            raise ValueError("A meta deve estar vinculada a uma disciplina.")
+        self.__id_disciplina = int(id_disciplina)
+
+    def set_id_aluno(self, id_aluno):
+        if id_aluno is None:
+            raise ValueError("A meta deve estar vinculada a um aluno.")
+        self.__id_aluno = int(id_aluno)
 
     def __validar_data(self, data_str, nome_campo):
-        """Valida se a string está no formato YYYY-MM-DD"""
         if not data_str:
-            raise ValueError(f"{nome_campo} é obrigatória.")
+            return # Allow empty dates if logic permits
         try:
-            # Tenta converter apenas para validar o formato
             datetime.strptime(data_str, '%Y-%m-%d')
         except ValueError:
             raise ValueError(f"{nome_campo} deve estar no formato AAAA-MM-DD (ex: 2024-12-31).")
@@ -55,34 +62,39 @@ class Meta:
     def get_descricao(self): return self.__descricao
     def get_data_limite(self): return self.__data_limite
     def get_data_conclusao(self): return self.__data_conclusao
-    def get_status(self): return self.__status # Retorna True/False
-    def get_status_sql(self): return 1 if self.__status else 0 # Retorna 1/0 para o banco
-    def get_id_usuario(self): return self.__id_usuario
+    def get_status(self): return self.__status
+    def get_status_sql(self): return 1 if self.__status else 0
+    def get_id_disciplina(self): return self.__id_disciplina
+    def get_id_aluno(self): return self.__id_aluno
 
     def __str__(self):
         status_str = "Concluída" if self.__status else "Pendente"
         return f"{self.__descricao} (Até: {self.__data_limite}) - {status_str}"
 
-from DAO_sql.DAO import DAO 
 
 class MetaDAO(DAO):
-
+    
     @classmethod
     def inserir(cls, obj):
         cls.abrir()
+        # Fixed: Added id_disciplina and changed id_usuario to id_aluno
         sql = """
-            INSERT INTO meta (descricao, data_limite, data_conclusao, status, id_usuario)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO meta (descricao, data_limite, data_conclusao, status, id_disciplina, id_aluno)
+            VALUES (?, ?, ?, ?, ?, ?)
         """
-        # Note o uso de obj.get_status_sql() para enviar 0 ou 1 ao banco
-        cls.execute(sql, (
-            obj.get_descricao(), 
-            obj.get_data_limite(), 
-            obj.get_data_conclusao(), 
-            obj.get_status_sql(), 
-            obj.get_id_usuario()
-        ))
-        cls.fechar()
+        try:
+            cls.execute(sql, (
+                obj.get_descricao(), 
+                obj.get_data_limite(), 
+                obj.get_data_conclusao(), 
+                obj.get_status_sql(), 
+                obj.get_id_disciplina(),
+                obj.get_id_aluno()
+            ))
+        except Exception as e:
+            print(f"Erro ao inserir: {e}")
+        finally:
+            cls.fechar()
 
     @classmethod
     def listar(cls):
@@ -91,26 +103,43 @@ class MetaDAO(DAO):
         cursor = cls.execute(sql)
         rows = cursor.fetchall()
         
-        # Mapeia as colunas na ordem do CREATE TABLE
-        # id, descricao, data_limite, data_conclusao, status, id_usuario
-        objs = [Meta(id, desc, dt_lim, dt_conc, status, id_user) 
-                for (id, desc, dt_lim, dt_conc, status, id_user) in rows]
+        # Mapeia as 7 colunas do banco
+        objs = []
+        for row in rows:
+            # row structure: (id, descricao, data_limite, data_conclusao, status, id_disciplina, id_aluno)
+            objs.append(Meta(row[0], row[1], row[2], row[3], row[4], row[5], row[6]))
         
         cls.fechar()
         return objs
 
     @classmethod
-    def listar_por_usuario(cls, id_usuario):
+    def listar_por_usuario(cls, id_aluno):
+        # Kept method name for compatibility with your view, but logic uses id_aluno
         cls.abrir()
-        sql = "SELECT * FROM meta WHERE id_usuario = ?"
-        cursor = cls.execute(sql, (id_usuario,))
+        # Fixed: WHERE id_aluno = ?
+        sql = "SELECT * FROM meta WHERE id_aluno = ?"
+        cursor = cls.execute(sql, (id_aluno,))
         rows = cursor.fetchall()
         
-        objs = [Meta(id, desc, dt_lim, dt_conc, status, id_user) 
-                for (id, desc, dt_lim, dt_conc, status, id_user) in rows]
+        objs = []
+        for row in rows:
+            objs.append(Meta(row[0], row[1], row[2], row[3], row[4], row[5], row[6]))
         
         cls.fechar()
         return objs
+    
+    @classmethod
+    def marcar_concluida(cls, id_meta):
+        """
+        Atualiza o status para 1 (Concluído) e define a data de conclusão para hoje.
+        """
+        from datetime import datetime
+        data_hoje = datetime.now().strftime('%Y-%m-%d')
+        
+        cls.abrir()
+        sql = "UPDATE meta SET status = 1, data_conclusao = ? WHERE id = ?"
+        cls.execute(sql, (data_hoje, id_meta))
+        cls.fechar()
 
     @classmethod
     def listar_id(cls, id):
@@ -119,7 +148,9 @@ class MetaDAO(DAO):
         cursor = cls.execute(sql, (id,))
         row = cursor.fetchone()
         
-        obj = Meta(*row) if row else None
+        obj = None
+        if row:
+            obj = Meta(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
         
         cls.fechar()
         return obj
@@ -127,9 +158,10 @@ class MetaDAO(DAO):
     @classmethod
     def atualizar(cls, obj):
         cls.abrir()
+        # Fixed: Added id_disciplina and changed id_usuario to id_aluno
         sql = """
             UPDATE meta 
-            SET descricao=?, data_limite=?, data_conclusao=?, status=?, id_usuario=?
+            SET descricao=?, data_limite=?, data_conclusao=?, status=?, id_disciplina=?, id_aluno=?
             WHERE id=?
         """
         cls.execute(sql, (
@@ -137,7 +169,8 @@ class MetaDAO(DAO):
             obj.get_data_limite(), 
             obj.get_data_conclusao(), 
             obj.get_status_sql(),
-            obj.get_id_usuario(),
+            obj.get_id_disciplina(),
+            obj.get_id_aluno(),
             obj.get_id()
         ))
         cls.fechar()
@@ -146,5 +179,7 @@ class MetaDAO(DAO):
     def excluir(cls, obj):
         cls.abrir()
         sql = "DELETE FROM meta WHERE id=?"
-        cls.execute(sql, (obj.get_id(),))
+        # Assuming obj is an instance, otherwise if passing ID directly, adjust here
+        id_to_delete = obj.get_id() if isinstance(obj, Meta) else obj
+        cls.execute(sql, (id_to_delete,))
         cls.fechar()

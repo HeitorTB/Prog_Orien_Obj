@@ -1,26 +1,15 @@
-# --- Entidade Disciplina ---
+from DAO_sql.database import Database
+
 class Disciplina:
     def __init__(self, id, nome):
-        self.set_id(id)
-        self.set_nome(nome)
+        self.id = id
+        self.nome = nome
 
-    def set_id(self, id_disc):
-        self.__id = id_disc
+    def get_id(self): return self.id
+    def get_nome(self): return self.nome
 
-    def set_nome(self, nome):
-        if not nome.strip():
-            raise ValueError("Nome da disciplina não pode ser vazio")
-        self.__nome = nome
-
-    def get_id(self): return self.__id
-    def get_nome(self): return self.__nome
-
-    def __str__(self):
-        return f"{self.__id} - {self.__nome}"
-
-from DAO_sql.DAO import DAO
-# --- DAO Disciplina ---
-class DisciplinaDAO(DAO):
+class DisciplinaDAO(Database):
+    
     @classmethod
     def inserir(cls, obj):
         cls.abrir()
@@ -30,29 +19,32 @@ class DisciplinaDAO(DAO):
 
     @classmethod
     def listar(cls):
+        # Lista TUDO (usado para o cadastro de disciplinas)
         cls.abrir()
-        cursor = cls.execute("SELECT * FROM disciplina")
+        sql = "SELECT * FROM disciplina"
+        cursor = cls.execute(sql)
         rows = cursor.fetchall()
         cls.fechar()
-        return [Disciplina(*row) for row in rows]
+        return [Disciplina(row[0], row[1]) for row in rows]
 
     @classmethod
-    def listar_id(cls, id):
+    def listar_com_professores(cls):
+        """
+        MÁGICA AQUI: Só retorna disciplinas que têm match com a formação de um professor.
+        """
         cls.abrir()
-        cursor = cls.execute("SELECT * FROM disciplina WHERE id = ?", (id,))
-        row = cursor.fetchone()
-        cls.fechar()
-        return Disciplina(*row) if row else None
-
-    @classmethod
-    def atualizar(cls, obj):
-        cls.abrir()
-        sql = "UPDATE disciplina SET nome=? WHERE id=?"
-        cls.execute(sql, (obj.get_nome(), obj.get_id()))
-        cls.fechar()
-
-    @classmethod
-    def excluir(cls, obj):
-        cls.abrir()
-        cls.execute("DELETE FROM disciplina WHERE id=?", (obj.get_id(),))
-        cls.fechar()
+        # O DISTINCT evita que 'Matemática' apareça 2 vezes se tiver 2 professores de Matemática
+        sql = """
+            SELECT DISTINCT d.id, d.nome 
+            FROM disciplina d
+            INNER JOIN professor p ON d.nome = p.formacao
+        """
+        try:
+            cursor = cls.execute(sql)
+            rows = cursor.fetchall()
+            return [Disciplina(row[0], row[1]) for row in rows]
+        except Exception as e:
+            print(f"Erro ao filtrar disciplinas: {e}")
+            return []
+        finally:
+            cls.fechar()

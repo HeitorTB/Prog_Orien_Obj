@@ -50,7 +50,9 @@ class Database:
         cls.execute("""
             CREATE TABLE IF NOT EXISTS disciplina (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                nome TEXT NOT NULL UNIQUE
+                nome TEXT NOT NULL,
+                id_professor INTEGER,
+                FOREIGN KEY(id_professor) REFERENCES professor(id)
             );
         """)
 

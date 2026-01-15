@@ -1,5 +1,5 @@
 from datetime import datetime
-# Ensure this import path matches your project structure
+# Certifique-se de que o caminho de importação corresponde à sua estrutura
 from DAO_sql.database import Database as DAO 
 
 class Meta:
@@ -9,8 +9,8 @@ class Meta:
         self.set_data_limite(data_limite)
         self.set_data_conclusao(data_conclusao)
         self.set_status(status)
-        self.set_id_disciplina(id_disciplina) # Added this
-        self.set_id_aluno(id_aluno)           # Renamed from id_usuario
+        self.set_id_disciplina(id_disciplina)
+        self.set_id_aluno(id_aluno)
 
     def set_id(self, id):
         self.__id = id
@@ -27,8 +27,6 @@ class Meta:
         self.__data_limite = data
 
     def set_data_conclusao(self, data):
-        # Assuming data_conclusao can be None if not finished, 
-        # but your DB creates it as text. If it is optional in logic, adjust here.
         if data: 
             self.__validar_data(data, "Data Conclusão")
         self.__data_conclusao = data
@@ -51,7 +49,7 @@ class Meta:
 
     def __validar_data(self, data_str, nome_campo):
         if not data_str:
-            return # Allow empty dates if logic permits
+            return
         try:
             datetime.strptime(data_str, '%Y-%m-%d')
         except ValueError:
@@ -77,7 +75,6 @@ class MetaDAO(DAO):
     @classmethod
     def inserir(cls, obj):
         cls.abrir()
-        # Fixed: Added id_disciplina and changed id_usuario to id_aluno
         sql = """
             INSERT INTO meta (descricao, data_limite, data_conclusao, status, id_disciplina, id_aluno)
             VALUES (?, ?, ?, ?, ?, ?)
@@ -103,10 +100,8 @@ class MetaDAO(DAO):
         cursor = cls.execute(sql)
         rows = cursor.fetchall()
         
-        # Mapeia as 7 colunas do banco
         objs = []
         for row in rows:
-            # row structure: (id, descricao, data_limite, data_conclusao, status, id_disciplina, id_aluno)
             objs.append(Meta(row[0], row[1], row[2], row[3], row[4], row[5], row[6]))
         
         cls.fechar()
@@ -114,9 +109,7 @@ class MetaDAO(DAO):
 
     @classmethod
     def listar_por_usuario(cls, id_aluno):
-        # Kept method name for compatibility with your view, but logic uses id_aluno
         cls.abrir()
-        # Fixed: WHERE id_aluno = ?
         sql = "SELECT * FROM meta WHERE id_aluno = ?"
         cursor = cls.execute(sql, (id_aluno,))
         rows = cursor.fetchall()
@@ -130,9 +123,6 @@ class MetaDAO(DAO):
     
     @classmethod
     def marcar_concluida(cls, id_meta):
-        """
-        Atualiza o status para 1 (Concluído) e define a data de conclusão para hoje.
-        """
         from datetime import datetime
         data_hoje = datetime.now().strftime('%Y-%m-%d')
         
@@ -158,7 +148,6 @@ class MetaDAO(DAO):
     @classmethod
     def atualizar(cls, obj):
         cls.abrir()
-        # Fixed: Added id_disciplina and changed id_usuario to id_aluno
         sql = """
             UPDATE meta 
             SET descricao=?, data_limite=?, data_conclusao=?, status=?, id_disciplina=?, id_aluno=?
@@ -179,7 +168,41 @@ class MetaDAO(DAO):
     def excluir(cls, obj):
         cls.abrir()
         sql = "DELETE FROM meta WHERE id=?"
-        # Assuming obj is an instance, otherwise if passing ID directly, adjust here
         id_to_delete = obj.get_id() if isinstance(obj, Meta) else obj
         cls.execute(sql, (id_to_delete,))
         cls.fechar()
+
+    @classmethod
+    def listar_pendentes_por_aluno(cls, id_aluno):
+        """
+        CORRIGIDO: Usa cls.execute em vez de cls.cursor.execute
+        """
+        cls.abrir()
+        sql = "SELECT * FROM meta WHERE id_aluno = ? AND (status = 0 OR status IS NULL)"
+        
+        # Correção aqui:
+        cursor = cls.execute(sql, (id_aluno,))
+        linhas = cursor.fetchall()
+        
+        cls.fechar()
+        
+        objetos = []
+        for linha in linhas:
+            m = Meta(linha[0], linha[1], linha[2], linha[3], linha[4], linha[5], linha[6])
+            objetos.append(m)
+        return objetos
+    
+    @classmethod
+    def listar_todas(cls):
+        """ 
+        CORRIGIDO: Usa cls.execute em vez de cls.cursor.execute
+        """
+        cls.abrir()
+        sql = "SELECT * FROM meta"
+        
+        # Correção aqui:
+        cursor = cls.execute(sql)
+        linhas = cursor.fetchall()
+        
+        cls.fechar()
+        return [Meta(*linha) for linha in linhas]

@@ -5,11 +5,10 @@ from views import View
 # --- IMPORTAÇÃO DAS TELAS (TEMPLATES) ---
 from templates.loginUI import LoginUI
 from templates.abrircontaUI import AbrirContaUI
-from templates.MantermetasUI import ManterMetasUI    # Aluno
+from templates.MantermetasUI import ManterMetaUI   # Aluno
 from templates.ManterHorarioUI import ManterHorarioUI # Aluno
-from templates.PublicarMaterialUI import PublicarMaterialUI # Professor
-# Se tiver telas de perfil criadas, importe-as também
-# from templates.PerfilAlunoUI import PerfilAlunoUI 
+from templates.PublicarMaterialUI import PublicarMaterialUI # Professor (Antigo)
+from templates.ManterProfessorUI import ManterProfessorUI 
 
 # Inicializa o Banco de Dados
 if __name__ == "__main__":
@@ -21,6 +20,7 @@ if __name__ == "__main__":
 class IndexUI:
     
     # --- MENU VISITANTE ---
+    @staticmethod
     def menu_visitante():
         st.sidebar.header("Bem-vindo!")
         op = st.sidebar.selectbox("Acesso", ["Login", "Criar Conta"])
@@ -28,6 +28,7 @@ class IndexUI:
         if op == "Criar Conta": AbrirContaUI.main()
 
     # --- MENU ALUNO ---
+    @staticmethod
     def menu_aluno():
         st.sidebar.markdown(f"🎓 **{st.session_state.get('usuario_nome', 'Aluno')}**")
         st.sidebar.markdown("---")
@@ -35,22 +36,29 @@ class IndexUI:
         op = st.sidebar.radio("Menu Aluno", ["Meus Objetivos (Metas)", "Meu Horário"])
 
         if op == "Meus Objetivos (Metas)": 
-            ManterMetasUI.main()
+            ManterMetaUI.main()
         
         if op == "Meu Horário": 
             ManterHorarioUI.main()
 
-    # --- MENU PROFESSOR ---
+    # --- MENU PROFESSOR (ATUALIZADO) ---
+    @staticmethod
     def menu_professor():
         st.sidebar.markdown(f"👨‍🏫 **Prof. {st.session_state.get('usuario_nome', 'Professor')}**")
         st.sidebar.markdown("---")
         
-        op = st.sidebar.radio("Menu Professor", ["Publicar Material", "Ver Alunos"])
+        # Adicionamos "Gerenciar Disciplinas" que leva para a tela nova
+        op = st.sidebar.radio("Menu Professor", ["Gerenciar Disciplinas", "Publicar Material"])
+
+        if op == "Gerenciar Disciplinas": 
+            # Chama a tela criada no Passo 3 (Cadastro de matérias)
+            ManterProfessorUI.main()
 
         if op == "Publicar Material": 
             PublicarMaterialUI.main()
 
     # --- CONTROLADOR PRINCIPAL ---
+    @staticmethod
     def sidebar():
         # Verifica se há usuário logado na sessão
         if "usuario_id" not in st.session_state:
@@ -71,6 +79,7 @@ class IndexUI:
                     del st.session_state[key]
                 st.rerun()
 
+    @staticmethod
     def main():
         IndexUI.sidebar()
 

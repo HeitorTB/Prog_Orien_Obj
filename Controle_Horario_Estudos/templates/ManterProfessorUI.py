@@ -7,23 +7,14 @@ class ManterProfessorUI:
     def main():
         st.header("Área do Professor")
         
-        # -----------------------------------------------------------
-        # VERIFICAÇÃO DE SEGURANÇA
-        # -----------------------------------------------------------
         if "usuario_id" not in st.session_state or st.session_state.get("usuario_tipo") != "professor":
             st.error("Acesso restrito a professores identificados.")
             return
 
         id_prof = st.session_state["usuario_id"]
         nome_prof = st.session_state.get("usuario_nome", "Professor")
-
-        # Exibe a saudação diretamente na tela principal
         st.write(f"Bem-vindo, Prof. **{nome_prof}**!")
         st.markdown("---")
-
-        # -----------------------------------------------------------
-        # CADASTRAR DISCIPLINA (Agora é a tela principal)
-        # -----------------------------------------------------------
         st.subheader("Nova Disciplina")
         
         with st.form("form_add_disc"):
@@ -41,10 +32,8 @@ class ManterProfessorUI:
         st.divider()
         st.subheader("Disciplinas que você leciona")
         
-        # Listagem das disciplinas
         todas = View.disciplina_listar()
         
-        # Filtra apenas as desse professor
         minhas = [d for d in todas if d.get_id_professor() == id_prof]
         
         if minhas:

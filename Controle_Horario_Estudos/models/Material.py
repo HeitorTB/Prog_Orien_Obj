@@ -15,11 +15,9 @@ class Material:
         self.__titulo = titulo
 
     def set_descricao(self, desc):
-        # Descrição pode ser opcional ou não, aqui deixei obrigatória
         if not desc.strip(): raise ValueError("Descrição não pode ser vazia")
         self.__descricao = desc
 
-    # Foreign Keys (IDs de outras tabelas)
     def set_id_professor(self, id_prof):
         self.__id_professor = id_prof
 
@@ -36,7 +34,6 @@ class Material:
         return f"{self.__id} - {self.__titulo} (Prof: {self.__id_professor})"
 
 from DAO_sql.DAO import DAO
-# --- DAO Material ---
 class MaterialDAO(DAO):
     @classmethod
     def inserir(cls, obj):
@@ -55,7 +52,6 @@ class MaterialDAO(DAO):
         cursor = cls.execute(sql)
         rows = cursor.fetchall()
         
-        # Desempacota 5 colunas: id, titulo, descricao, id_professor, id_meta
         objs = [Material(id, titulo, desc, id_prof, id_meta) for (id, titulo, desc, id_prof, id_meta) in rows]
         
         cls.fechar()

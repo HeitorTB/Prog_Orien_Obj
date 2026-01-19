@@ -9,24 +9,15 @@ class ManterHorarioUI:
         st.header("Cronograma de Estudos")
         id_aluno = st.session_state["usuario_id"]
 
-        # ---------------------------------------------------------
-        # PREPARAÇÃO DOS DADOS
-        # ---------------------------------------------------------
-        # 1. Busca TODAS as metas (para exibir o nome no histórico lá embaixo)
         todas_metas = View.meta_listar_aluno(id_aluno)
 
-        # 2. Filtra apenas as PENDENTES (status == False ou 0) para o Selectbox
         metas_pendentes = [m for m in todas_metas if not m.get_status()]
 
-        # Se não tiver nenhuma meta pendente, avisa (mas não impede de ver o histórico)
         pode_agendar = True
         if not metas_pendentes:
             st.warning("⚠️ Você não possui metas pendentes para agendar. Crie uma nova meta ou reabra uma antiga.")
             pode_agendar = False
 
-        # ---------------------------------------------------------
-        # 1. AGENDAR HORÁRIO (Apenas se tiver metas pendentes)
-        # ---------------------------------------------------------
         if pode_agendar:
             with st.container(border=True):
                 st.subheader("📅 Novo Agendamento")
@@ -56,23 +47,16 @@ class ManterHorarioUI:
 
         st.divider()
 
-        # ---------------------------------------------------------
-        # 2. MEUS HORÁRIOS (Histórico)
-        # ---------------------------------------------------------
         st.subheader("🕑 Agenda Completa")
         horarios = View.horario_listar(id_aluno)
         
         if horarios:
             dados_horario = []
             for h in horarios:
-                # Recuperar o nome da meta para exibir na tabela
-                # CORREÇÃO AQUI: Usamos 'todas_metas' para achar o nome, 
-                # assim metas concluídas ainda aparecem corretamente no histórico.
                 desc_meta = "Meta excluída/inválida"
                 for m in todas_metas:
                     if m.get_id() == h.get_id_meta():
                         desc_meta = m.get_descricao()
-                        # Adiciona um marcador se já foi concluída
                         if m.get_status():
                             desc_meta += " (Concluída)"
                         break
@@ -82,8 +66,7 @@ class ManterHorarioUI:
                     "Início": h.get_inicio(),
                     "Fim": h.get_fim()
                 })
-            
-            # Exibe a tabela
+
             df = pd.DataFrame(dados_horario)
             st.dataframe(df, use_container_width=True, hide_index=True)
         else:

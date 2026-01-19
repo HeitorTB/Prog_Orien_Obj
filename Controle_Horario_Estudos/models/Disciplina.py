@@ -1,62 +1,71 @@
-import sqlite3
-
-DB_PATH = 'sistema_estudos.db'
+# Importação corrigida conforme sua estrutura de pastas
+from DAO_sql.DAO import DAO
 
 class Disciplina:
-    # Adicionamos id_professor na classe
     def __init__(self, id, nome, id_professor):
-        self.id = id
-        self.nome = nome
-        self.id_professor = id_professor
+        self.set_id(id)
+        self.set_nome(nome)
+        self.set_id_professor(id_professor)
 
-    def get_id(self): return self.id
-    def get_nome(self): return self.nome
-    def get_id_professor(self): return self.id_professor
+    def set_id(self, id_cliente):
+        self.__id = id_cliente
 
-class DisciplinaDAO:
-    @classmethod
-    def abrir(cls):
-        cls.conn = sqlite3.connect(DB_PATH)
-        cls.cursor = cls.conn.cursor()
-        
-        # Cria a tabela já com a nova coluna id_professor
-        cls.cursor.execute("""
-            CREATE TABLE IF NOT EXISTS disciplina (
-                id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                nome TEXT NOT NULL,
-                id_professor INTEGER,
-                FOREIGN KEY(id_professor) REFERENCES professor(id)
-            )
-        """)
-        cls.conn.commit()
+    def set_nome(self, nome):
+        if not nome or not nome.strip():
+            raise ValueError("Nome não pode ser vazio")
+        self.__nome = nome
 
-    @classmethod
-    def fechar(cls):
-        cls.conn.commit()
-        cls.conn.close()
+    def set_id_professor(self, id):
+        if not id: 
+            raise ValueError("Professor obrigatório")
+        self.__id_professor = int(id)
 
+    # Getters
+    def get_id(self): return self.__id
+    def get_nome(self): return self.__nome
+    def get_id_professor(self): return self.__id_professor
+
+    def __str__(self):
+        return f"{self.__id} - {self.__nome} - {self.__id_professor}"
+
+
+class DisciplinaDAO(DAO):
+    
     @classmethod
     def inserir(cls, disciplina):
         cls.abrir()
         sql = "INSERT INTO disciplina (nome, id_professor) VALUES (?, ?)"
-        cls.cursor.execute(sql, (disciplina.nome, disciplina.id_professor))
+        
+        params = (disciplina.get_nome(), disciplina.get_id_professor())
+        
+        cls.execute(sql, params)
         cls.fechar()
 
     @classmethod
     def listar(cls):
-        """ Lista todas as disciplinas cadastradas """
+        """ 
+        Lista todas as disciplinas do banco e retorna 
+        uma lista de OBJETOS da classe Disciplina.
+        """
         cls.abrir()
-        cls.cursor.execute("SELECT * FROM disciplina")
-        linhas = cls.cursor.fetchall()
+        sql = "SELECT * FROM disciplina"
+        
+        cursor = cls.execute(sql)
+        linhas = cursor.fetchall()
+        
         cls.fechar()
-        # linha: (id, nome, id_professor)
-        return [Disciplina(l[0], l[1], l[2]) for l in linhas]
+        
+        objetos = []
+        for l in linhas:
+            objetos.append(Disciplina(l[0], l[1], l[2]))
+        
+        return objetos
 
     @classmethod
     def listar_com_nome_professor(cls):
         """
-        Retorna uma lista especial formatada para o Selectbox do Aluno.
-        Ex: "Matemática (Prof. João)"
+        Retorna uma lista de DICIONÁRIOS para facilitar o display no Streamlit.
+        Faz o JOIN para pegar o nome do professor ao invés do ID.
         """
         cls.abrir()
         sql = """
@@ -64,11 +73,10 @@ class DisciplinaDAO:
             FROM disciplina d
             INNER JOIN professor p ON d.id_professor = p.id
         """
-        cls.cursor.execute(sql)
-        linhas = cls.cursor.fetchall()
+        cursor = cls.execute(sql)
+        linhas = cursor.fetchall()
         cls.fechar()
         
-        # Retorna uma lista de dicionários para facilitar na View
         resultado = []
         for l in linhas:
             resultado.append({

@@ -1,9 +1,6 @@
-from DAO_sql.database import Database
+from DAO_sql.DAO import DAO
 
 class Cronograma:
-    """
-    Model class that maps to the 'horario_estudo' table.
-    """
     def __init__(self, id, data_hora_inicio, data_hora_fim, id_aluno, id_meta):
         self.set_id(id)
         self.set_data_hora_inicio(data_hora_inicio)
@@ -31,15 +28,12 @@ class Cronograma:
         if not id: raise ValueError("Meta obrigatória")
         self.__id_meta = int(id)
 
-    # --- Getters (Original DB names) ---
     def get_id(self): return self.__id
     def get_data_hora_inicio(self): return self.__data_hora_inicio
     def get_data_hora_fim(self): return self.__data_hora_fim
     def get_id_aluno(self): return self.__id_aluno
     def get_id_meta(self): return self.__id_meta
 
-    # --- FIX: Alias Getters (For UI Compatibility) ---
-    # These match what your ManterHorarioUI.py is asking for
     def get_inicio(self): 
         return self.__data_hora_inicio
         
@@ -47,14 +41,13 @@ class Cronograma:
         return self.__data_hora_fim
         
     def get_nome(self):
-        # If the UI tries to get a 'name', we return a formatted string
         return f"Estudo: {self.__data_hora_inicio}"
 
     def __str__(self):
         return f"Estudo: {self.__data_hora_inicio} até {self.__data_hora_fim}"
 
 
-class CronogramaDAO(Database):
+class CronogramaDAO(DAO):
     
     @classmethod
     def inserir(cls, obj):
@@ -86,7 +79,6 @@ class CronogramaDAO(Database):
             
             objetos = []
             for row in rows:
-                # row order: id, start, end, id_aluno, id_meta
                 c = Cronograma(row[0], row[1], row[2], row[3], row[4])
                 objetos.append(c)
             

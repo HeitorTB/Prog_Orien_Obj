@@ -13,7 +13,6 @@ class AbrirContaUI:
             email = st.text_input("E-mail")
             senha = st.text_input("Senha", type="password")
             
-            # Campo extra só aparece se for professor (visual)
             formacao = ""
             if tipo == "Professor":
                 st.markdown("**Dados Profissionais**")

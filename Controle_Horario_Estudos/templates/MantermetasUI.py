@@ -8,24 +8,17 @@ class ManterMetaUI:
     def main():
         st.header("Gerenciar Metas de Estudo")
         
-        # Verifica se é aluno
         if "usuario_id" not in st.session_state or st.session_state.get("usuario_tipo") != "aluno":
             st.error("Acesso restrito a alunos.")
             return
 
         id_aluno = st.session_state["usuario_id"]
 
-        # -----------------------------------------------------------
-        # FORMULÁRIO DE NOVA META
-        # -----------------------------------------------------------
         with st.expander("Criar Nova Meta", expanded=False):
             with st.form("form_nova_meta"):
                 descricao = st.text_input("Descrição da Meta (ex: Terminar Cap. 4)")
                 
-                # O st.date_input retorna um objeto 'date'
                 data_input = st.date_input("Data Limite")
-                
-                # Busca disciplinas para o select
                 disciplinas = View.disciplina_listar_para_select()
                 
                 opcoes = {}
@@ -43,13 +36,10 @@ class ManterMetaUI:
                         st.error("Disciplina obrigatória.")
                     else:
                         try:
-                            # --- CORREÇÃO AQUI ---
-                            # Convertemos o objeto date para string 'YYYY-MM-DD'
                             data_limite_str = data_input.strftime('%Y-%m-%d')
                             
                             id_disc = opcoes[selecao]
                             
-                            # Passamos a string formatada para a View
                             View.meta_inserir(descricao, data_limite_str, id_disc, id_aluno)
                             
                             st.success("Meta criada!")
@@ -60,9 +50,6 @@ class ManterMetaUI:
 
         st.divider()
         
-        # -----------------------------------------------------------
-        # LISTAGEM DE METAS PENDENTES + MATERIAIS
-        # -----------------------------------------------------------
         st.subheader("Suas Metas Pendentes")
         
         # 1. Busca as metas do aluno
@@ -78,7 +65,6 @@ class ManterMetaUI:
                     
                     with col1:
                         st.markdown(f"### {m.get_descricao()}")
-                        # Busca nome da disciplina (lógica visual)
                         nome_disc = "Disciplina Geral"
                         if disciplinas:
                              for d in disciplinas:
@@ -87,7 +73,6 @@ class ManterMetaUI:
                                     break
                         st.caption(f"Limite: {m.get_data_limite()} | {nome_disc}")
 
-                        # --- VISUALIZAR MATERIAIS ---
                         try:
                             materiais = View.material_listar_por_meta(m.get_id())
                             if materiais:
@@ -99,11 +84,10 @@ class ManterMetaUI:
                             else:
                                 st.caption("Nenhum material de apoio anexado pelo professor.")
                         except AttributeError:
-                            # Caso o método não exista na View ainda
                             st.warning("Erro ao carregar materiais (Verifique a View).")
 
                     with col2:
-                        st.write("") # Espaçamento
+                        st.write("")
                         if st.button("Concluir", key=f"btn_conc_{m.get_id()}"):
                             View.meta_concluir(m.get_id())
                             st.toast("Meta concluída! 🎉")

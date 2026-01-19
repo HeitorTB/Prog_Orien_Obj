@@ -12,10 +12,8 @@ class LoginUI:
         if st.button("Entrar"):
             usuario = None
             
-            # 1. Tenta achar na tabela de Professores
             usuario = View.professor_autenticar(email, senha)
             
-            # 2. Se não achou, tenta na tabela de Alunos
             if not usuario:
                 usuario = View.aluno_autenticar(email, senha)
                 

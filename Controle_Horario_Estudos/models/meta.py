@@ -1,6 +1,6 @@
 from datetime import datetime
 # Certifique-se de que o caminho de importação corresponde à sua estrutura
-from DAO_sql.database import Database as DAO 
+from DAO_sql.DAO import DAO 
 
 class Meta:
     def __init__(self, id, descricao, data_limite, data_conclusao, status, id_disciplina, id_aluno):
@@ -174,9 +174,6 @@ class MetaDAO(DAO):
 
     @classmethod
     def listar_pendentes_por_aluno(cls, id_aluno):
-        """
-        CORRIGIDO: Usa cls.execute em vez de cls.cursor.execute
-        """
         cls.abrir()
         sql = "SELECT * FROM meta WHERE id_aluno = ? AND (status = 0 OR status IS NULL)"
         
@@ -194,13 +191,9 @@ class MetaDAO(DAO):
     
     @classmethod
     def listar_todas(cls):
-        """ 
-        CORRIGIDO: Usa cls.execute em vez de cls.cursor.execute
-        """
         cls.abrir()
         sql = "SELECT * FROM meta"
         
-        # Correção aqui:
         cursor = cls.execute(sql)
         linhas = cursor.fetchall()
         

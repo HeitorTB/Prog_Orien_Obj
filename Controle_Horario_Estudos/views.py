@@ -2,7 +2,7 @@ from models.Aluno import aluno, alunoDAO
 from models.Professor import Professor, ProfessorDAO
 from models.Disciplina import Disciplina, DisciplinaDAO
 from models.meta import Meta, MetaDAO
-from models.horario_estudo import Cronograma, CronogramaDAO # Ajuste o nome do arquivo se for horario_estudo.py
+from models.horario_estudo import Cronograma, CronogramaDAO 
 from models.Material import Material, MaterialDAO
 
 class View:
